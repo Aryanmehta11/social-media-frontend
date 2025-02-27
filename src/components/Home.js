@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PostCard from "./PostCard";
 import "../styles/PostCard.css";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function Home() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  
 
   useEffect(() => {
     axios.get(`${BACKEND_URL}/posts`).then((res) => setPosts(res.data)).catch((error) => console.error("Error fetching posts:", error));;
