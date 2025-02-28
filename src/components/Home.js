@@ -19,6 +19,10 @@ function Home() {
     setPosts(posts.filter((post) => post._id !== id));
   };
 
+  const handleUpdate = (post) => {
+    navigate(`/update/${post._id}`, { state: { post } });
+  };
+
   return (
     <div className="container">
       <div className="header">
@@ -31,7 +35,7 @@ function Home() {
       {posts.length === 0 ? (
         <p className="no-posts">No posts yet. Click the button above to create your first post! 😊</p>
       ) : (
-        posts.map((post) => <PostCard key={post._id} post={post} onDelete={handleDelete} />)
+        posts.map((post) => <PostCard key={post._id} post={post} onDelete={handleDelete} onUpdate={handleUpdate} />)
       )}
     </div>
   );

@@ -7,13 +7,16 @@ function CreatePost() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL; // ✅ Use env variable
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!image) {
-      alert("Please select an image before submitting.");
+      setError("Please select an image before submitting.");
       return;
     }
 
@@ -23,17 +26,27 @@ function CreatePost() {
     formData.append("image", image);
 
     try {
-      await axios.post("https://social-media-backend-5a6z.onrender.com/posts", formData);
+      setLoading(true);
+      setError(null);
+
+      // ✅ Use BACKEND_URL + "/posts" dynamically
+      await axios.post(`${BACKEND_URL}/posts`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       navigate("/");
-    } catch (error) {
-      console.error("Error uploading post:", error);
-      alert("Failed to upload post. Please try again.");
+    } catch (err) {
+      console.error("Error uploading post:", err);
+      setError("Failed to upload post. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="container">
       <h1>Create Post</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -54,7 +67,9 @@ function CreatePost() {
           onChange={(e) => setImage(e.target.files[0])}
           required
         />
-        <button type="submit">Upload</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Uploading..." : "Upload"}
+        </button>
       </form>
     </div>
   );
